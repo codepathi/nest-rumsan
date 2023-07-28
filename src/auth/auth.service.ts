@@ -67,4 +67,10 @@ export class AuthService {
             secret: secret
         })
     }
+
+    async googleLogin(email:string){
+        const token = await this.signToken(11111, email)
+        console.log({token: token})
+        return {accessToken : token}
+    }
 }
