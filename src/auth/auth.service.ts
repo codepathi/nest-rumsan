@@ -15,7 +15,7 @@ export class AuthService {
     async signup(dto: AuthDto){
 
         try {
-            const salt = await bcrypt.genSalt(10);
+        const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(dto.password, salt);
         
         const user = await this.prisma.user.create({
@@ -66,5 +66,30 @@ export class AuthService {
             expiresIn: '15m',
             secret: secret
         })
+    }
+
+    async signupWithGoogle(email:string) {
+        const emailInDB = await this.prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        })
+        
+        if(!emailInDB){
+            const newUser = await this.prisma.user.create({
+                data: {
+                    email: email,
+                    hash: "hash"
+                }
+            })
+        }
+
+    }
+
+    async googleLogin(user:any){
+        const email = user._json.email;
+        const token = await this.signToken(11111, email)
+        this.signupWithGoogle(email)
+        return {accessToken : token}
     }
 }
