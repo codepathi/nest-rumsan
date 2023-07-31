@@ -1,11 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class BookService {
+  constructor(private prisma: PrismaService){}
+  
   create(createBookDto: CreateBookDto) {
-    return 'This action adds a new book';
+    console.log(createBookDto)
+    return this.prisma.bookmark.create({
+      data: {
+        title: createBookDto.title,
+        description: createBookDto.description,
+        link: createBookDto.link,
+        userId: 10
+      }
+    });
   }
 
   findAll() {
