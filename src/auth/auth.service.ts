@@ -68,8 +68,28 @@ export class AuthService {
         })
     }
 
-    async googleLogin(email:string){
+    async signupWithGoogle(email:string) {
+        const emailInDB = await this.prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        })
+        
+        if(!emailInDB){
+            const newUser = await this.prisma.user.create({
+                data: {
+                    email: email,
+                    hash: "hash"
+                }
+            })
+        }
+
+    }
+
+    async googleLogin(user:any){
+        const email = user._json.email;
         const token = await this.signToken(11111, email)
+        this.signupWithGoogle(email)
         return {accessToken : token}
     }
 }
