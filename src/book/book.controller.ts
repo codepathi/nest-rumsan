@@ -9,7 +9,8 @@ export class BookController {
 
   @Post()
   create(@Body() createBookDto: CreateBookDto, @Request() req:any) {
-    console.log(req)
+    const {sub} = req.user
+    console.log(req.user)
     return this.bookService.create(createBookDto)
   }
 
