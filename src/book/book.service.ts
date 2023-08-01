@@ -24,7 +24,6 @@ export class BookService {
     return allBooks;
   }
 
- 
   findOne(id: number) {
     const allBooks = this.prisma.bookmark.findMany({
       where: {

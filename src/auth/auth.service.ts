@@ -12,7 +12,7 @@ export class AuthService {
 
     constructor(private prisma:PrismaService, private jwt: JwtService, private config: ConfigService){}
     
-    async signup(dto: AuthDto){
+    async signup(dto: AuthDto) {
 
         try {
         const salt = await bcrypt.genSalt(10);
@@ -21,7 +21,8 @@ export class AuthService {
         const user = await this.prisma.user.create({
             data: {
                 email: dto.email,
-                hash: hash
+                hash: hash,
+                role: ['client']
             }
         })
 
@@ -50,15 +51,16 @@ export class AuthService {
         // If password incorrect
         if(!correct) throw new ForbiddenException('Incorrect password')
 
-        const token = await this.signToken(user.id, user.email)
+        const token = await this.signToken(user.id, user.email, user.role)
 
         return {accessToken : token}
     }
 
-    signToken(userId:number, email:string):Promise<string> {
+    signToken(userId:number, email:string, role:string[]):Promise<string> {
         const payload = {
             sub: userId,
-            email
+            email,
+            role
         }
 
         const secret = this.config.get('JWT_SECRET');
@@ -88,7 +90,7 @@ export class AuthService {
 
     async googleLogin(user:any){
         const email = user._json.email;
-        const token = await this.signToken(11111, email)
+        const token = await this.signToken(11111, email, ['client'])
         this.signupWithGoogle(email)
         return {accessToken : token}
     }

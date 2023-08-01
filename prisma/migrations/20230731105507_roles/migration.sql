@@ -7,6 +7,7 @@ CREATE TABLE "users" (
     "hash" TEXT NOT NULL,
     "firstName" TEXT,
     "lastName" TEXT,
+    "role" TEXT[],
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
