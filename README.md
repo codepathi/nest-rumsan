@@ -1,4 +1,4 @@
-<h2>Simple Role Based Access Control using Guards</h2>
+<h2>Simple Role Based Access Control using Guards</h2> 
 
 <h4>Roles</h4>
 <ul>
@@ -16,8 +16,8 @@
 
 <h3>Implementation</h3>
 <ul>
-  <li><b>For book restriction:</b> Created a custom guard that checks whether the logged in user is moderator or admin or not and return true only if they are moderator or admin.</li>
-  <li><b>For changing role:</b> Created a custom guard that checks whether the logged in user is admin or not and return true only if they are admin.</li>
+  <li>Created a custom decorator to send metadata to role guard.</li>
+  <li>RoleGuard uses metadata (gets permitted roles array) and compares it with user's role array. If user has the required role the guard allows execution, if not, the guard will restrict execution of the controller.</li>
 </ul>
 
 <h4>Next</h4>
