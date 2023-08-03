@@ -23,7 +23,7 @@ export class BookController {
     const {sub} = req.user
     return this.bookService.create(createBookDto, sub)
   }
-  
+
   @UseGuards(AbilityGuard)
   @UseGuards(AuthGuard('jwt'))
   @Roles('admin')
@@ -40,7 +40,7 @@ export class BookController {
   }
 
 
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   @UseGuards(AbilityGuard)
   @CheckAbilites({action: Action.Delete, subject: Book})
   @Patch(':id')
