@@ -1,5 +1,5 @@
 export class User {
-    id: number;
+    sub: number;
     email: string;
-    roles: string[];
+    role: string[];
   }

@@ -23,10 +23,16 @@ export class AbilityFactory {
     defineAbility(user: User){
         const {can, cannot, build} = new AbilityBuilder<AppAbility>(createMongoAbility);
 
-        if(user.roles.includes('admin')){
+        if(user.role.includes('admin')){
             can(Action.Create, Book)
+            can(Action.Update, Book)
+            can(Action.Delete, Book)
         }
-        else{
+        else if (user.role.includes('moderator')) {
+            can(Action.Create, Book)
+            can(Action.Update, Book)
+        }
+        else {
             can(Action.Read, Book)
         }
         

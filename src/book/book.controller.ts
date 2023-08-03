@@ -14,11 +14,11 @@ import { Book } from './entities/book.entity';
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService, private abilityFactory: AbilityFactory) {}
-
-  @Post()
+  
   @UseGuards(AbilityGuard)
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
+  @CheckAbilites({action: Action.Create, subject: Book})
+  @Post()
   create(@Body() createBookDto: CreateBookDto, @Request() req:any) {
     const {sub} = req.user
     return this.bookService.create(createBookDto, sub)
@@ -26,23 +26,20 @@ export class BookController {
 
   @UseGuards(AbilityGuard)
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @Get()
   findAll() {
     return this.bookService.findAll();
   }
 
-  @UseGuards(BookGuard) // Checks if user is requesting with their own ID or not
-  @UseGuards(AuthGuard('jwt')) // Checks if user is authenticated and create req.user if authenticated
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.bookService.findOne(+id);
   }
 
-
-  @UseGuards(AuthGuard('jwt'))
   @UseGuards(AbilityGuard)
-  @CheckAbilites({action: Action.Delete, subject: Book})
+  @UseGuards(AuthGuard('jwt'))
+  @CheckAbilites({action: Action.Update, subject: Book})
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
     
@@ -50,6 +47,9 @@ export class BookController {
 
   }
 
+  @UseGuards(AbilityGuard)
+  @UseGuards(AuthGuard('jwt'))
+  @CheckAbilites({action: Action.Delete, subject: Book})
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.bookService.remove(+id);
