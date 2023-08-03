@@ -2,10 +2,15 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import {ForbiddenError} from '@casl/ability'
-import { AbilityFactory, Action } from './ability.factory';
+import { AbilityFactory, Action, Subjects } from './ability.factory';
 import { Book } from 'src/book/entities/book.entity';
 import { CHECK_ABILITY } from './ability.decorator';
 
+
+interface RuleType {
+  action: Action;
+  subject: Subjects;
+}
 @Injectable()
 export class AbilityGuard implements CanActivate {
   
@@ -16,7 +21,6 @@ export class AbilityGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
 
     const rules = this.reflector.get(CHECK_ABILITY, context.getHandler())
-    console.log(rules)
 
     const request = context.switchToHttp().getRequest();
     const users = request.user;
@@ -32,7 +36,7 @@ export class AbilityGuard implements CanActivate {
     // } 
 
     try {
-      rules.forEach((rule) => {
+      rules.forEach((rule : RuleType) => {
         ForbiddenError.from(ability).setMessage('Noooo!').throwUnlessCan(rule.action, rule.subject)
       })
       
