@@ -1,5 +1,5 @@
 export class User {
     id: number;
-    isAdmin: boolean;
-    orgId: number;
+    email: string;
+    roles: string[];
   }

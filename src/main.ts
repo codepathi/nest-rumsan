@@ -13,7 +13,7 @@ async function bootstrap() {
   .setTitle('Rumsan Nest')
   .setDescription('Rumsan nest CRUD and OAUTH documentation')
   .setVersion('1.0')
-  .addTag('cats')
+  .addBearerAuth()
   .build();
 const document = SwaggerModule.createDocument(app, config);
 SwaggerModule.setup('api', app, document);

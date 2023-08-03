@@ -1,15 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards, ParseIntPipe, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { BookGuard } from './guards/book.guard';
 import { AbilityGuard } from 'src/ability/ability.guard';
-import { Roles } from 'src/ability/ability.decorator';
+import { CheckAbilites, Roles } from 'src/ability/ability.decorator';
+import { AbilityFactory, Action } from 'src/ability/ability.factory';
+import {ForbiddenError} from '@casl/ability'
+import { User } from 'src/user/entities/user.entity';
+import { Book } from './entities/book.entity';
 
 @Controller('book')
 export class BookController {
-  constructor(private readonly bookService: BookService) {}
+  constructor(private readonly bookService: BookService, private abilityFactory: AbilityFactory) {}
 
   @Post()
   @UseGuards(AbilityGuard)
@@ -35,9 +39,15 @@ export class BookController {
     return this.bookService.findOne(+id);
   }
 
+
+  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AbilityGuard)
+  @CheckAbilites({action: Action.Delete, subject: Book})
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
-    return this.bookService.update(+id, updateBookDto);
+    
+   return this.bookService.update(+id, updateBookDto)
+
   }
 
   @Delete(':id')
