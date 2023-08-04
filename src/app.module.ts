@@ -6,10 +6,14 @@ import {ConfigModule} from '@nestjs/config'
 import { BookModule } from './book/book.module';
 import { ManageRoleModule } from './manage-role/manage-role.module';
 import { AbilityModule } from './ability/ability.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true
+    }),
+    CacheModule.register({
       isGlobal: true
     }),
     AuthModule,

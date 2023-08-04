@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import {ValidationPipe} from '@nestjs/common'
+import {ValidationPipe, Logger} from '@nestjs/common'
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger'
 
 async function bootstrap() {
@@ -9,6 +9,8 @@ async function bootstrap() {
     whitelist: true
   }))
 
+  const logger = new Logger('bootstrap')
+
   const config = new DocumentBuilder()
   .setTitle('Rumsan Nest')
   .setDescription('Rumsan nest CRUD and OAUTH documentation')
@@ -16,9 +18,10 @@ async function bootstrap() {
   .addBearerAuth()
   .build();
 const document = SwaggerModule.createDocument(app, config);
-SwaggerModule.setup('api', app, document);
+SwaggerModule.setup('documentation', app, document);
 
-  await app.listen(3333);
+  logger.log(`Swagger Documentation running on the url http://localhost:${process.env.PORT}/documentation`)
+  await app.listen(process.env.PORT);
 }
 
 bootstrap();

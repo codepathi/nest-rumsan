@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards, ParseIntPipe, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards, ParseIntPipe, ExecutionContext, ForbiddenException, Inject } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -10,10 +10,11 @@ import { AbilityFactory, Action } from 'src/ability/ability.factory';
 import {ForbiddenError} from '@casl/ability'
 import { User } from 'src/user/entities/user.entity';
 import { Book } from './entities/book.entity';
-
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import {Cache} from 'cache-manager';
 @Controller('book')
 export class BookController {
-  constructor(private readonly bookService: BookService, private abilityFactory: AbilityFactory) {}
+  constructor(private readonly bookService: BookService, private abilityFactory: AbilityFactory, @Inject(CACHE_MANAGER) private cacheManager: Cache) {}
   
   @UseGuards(AbilityGuard)
   @UseGuards(AuthGuard('jwt'))
@@ -27,8 +28,20 @@ export class BookController {
   @UseGuards(AbilityGuard)
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  findAll() {
-    return this.bookService.findAll();
+  async findAll() { 
+    
+    const cachedBook:string = await this.cacheManager.get('books');
+    
+    if(!cachedBook){
+    const Books = await this.bookService.findAll();
+    const BooksString = JSON.stringify(Books);
+    await this.cacheManager.set('books', BooksString);
+    return Books
+    }
+    else{
+      return JSON.parse(cachedBook);
+    }
+    
   }
 
   @UseGuards(AuthGuard('jwt'))
